@@ -3,7 +3,7 @@ import urllib
 from urllib.request import *
 
 
-page = 1
+#page = 1
 url = 'http://www.bilibili.com'
 try:
     request = Request(url)
