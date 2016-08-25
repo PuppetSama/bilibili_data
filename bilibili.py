@@ -1,39 +1,37 @@
 # -*- coding:utf-8 -*-
-#import urllib
-#from urllib.request import *
-
-
-#url = 'http://www.bilibili.com'
-#try:
-#    request = Request(url)
-#    response = urlopen(request)
-#    print(response.read())
-#except(urllib2.URLError, e):
-#	if hasattr(e,"code"):
-#        print(e.code)
-#    if hasattr(e,"reason"):
-#        print(e.reason)
-
-import urllib.request
+import urllib
+import urllib2
+import re
+import httplib
+import StringIO
 import gzip
 
-def getUrlContent(url):  
-    #返回页面内容  
-    doc = urllib.request.urlopen(url).read()  
-    #解码  
-    try:  
-        html=gzip.decompress(doc).decode("utf-8")  
-    except:  
-        html=doc.decode("utf-8")  
-    return html  
-
-rage = 1
-url = "http://www.bilibili.com/video/douga-mad-1.html"
-#data = urllib.request.urlopen(url).read()
-data =getUrlContent(url)
-#buf = StringIO.StringIO(<response object>.content)
-#gzip_f = gzip.GzipFile(fileobj=buf)
-#content = gzip_f.read()
-
-#data = data.decode('utf-8')
-print(data)
+page = 111
+url = 'https://www.bilibili.com/video/av' + str(page)
+user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
+headers = { 'User-Agent' : user_agent }
+try:
+    request = urllib2.Request(url,headers = headers)
+    try:
+        request.add_header('Accept-encoding', 'gzip')
+        opener = urllib2.build_opener()
+        f = opener.open(request)
+        compresseddata = f.read()
+        compressedstream = StringIO.StringIO(compresseddata)
+        gzipper = gzip.GzipFile(fileobj=compressedstream)
+        print gzipper.read()
+    except IOError, e:
+        response = urllib2.urlopen(request)
+        content = response.read().decode('utf-8')
+        pattern = re.compile('<script type=\'(.*?)/javascript\'>', re.S)
+        items = re.findall(pattern, content)
+        for item in items:
+    	    print item[0].encode('utf-8')
+    	    print '--------------------'
+    	    #print item[1].encode('utf-8')
+        #print response.read()
+except urllib2.URLError, e:
+    if hasattr(e,"code"):
+        print e.code
+    if hasattr(e,"reason"):
+        print e.reason
