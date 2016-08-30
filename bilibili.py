@@ -11,7 +11,7 @@ class Bilibili(object):
     #初始化方法，定义变量
     def __init__(self):
         #起始av号
-        self.pageIndex = 9
+        self.pageIndex = 1111
         self.user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
         self.headers = { 'User-Agent' : self.user_agent }
         #存放数据的变量
@@ -91,7 +91,7 @@ class Bilibili(object):
         return pageDatas
 
     #获取一个视频信息
-    def getOneAv(self,datas,pageIndex):
+    def getOneAv(self,pageDatas,pageIndex):
         for data in pageDatas:
             input = raw_input()
             pageDatas = self.getPageItems(self.pageIndex)
@@ -105,7 +105,10 @@ class Bilibili(object):
 
     def start(self):
         self.enable = True
-        self.getPageItems(self.pageIndex)
+        pageDatas = self.getPageItems(self.pageIndex)
+        if pageDatas:
+            self.datas.append(pageDatas)
+            self.pageIndex += 1
         nowPage = 0
         while self.enable:
             pageDatas = self.datas[0]
