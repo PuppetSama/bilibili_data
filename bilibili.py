@@ -51,7 +51,7 @@ class Bilibili(object):
             print '未能找到有效信息|该视频不存在'
             return None
         for item in items:
-            print item[0],item[1]
+            item[0],item[1]
         title_pattern = re.compile('<title>(.*?)</title>', re.S)
         title_item = re.findall(title_pattern, content)[0]
         title_items = title_item.split('_')
@@ -61,10 +61,10 @@ class Bilibili(object):
         intro_item = re.findall(intro_pattern, content)[0]
         usname_pattern = re.compile('class="name".*?title="(.*?)"', re.S)
         usname_item = re.findall(usname_pattern, content)[0]
-        print 'av' + item[1],title_items[0],'分类',title_items[2],title_items[1]
-        print '投稿时间',time_item,'up主',usname_item
-        print '视频说明'
-        print intro_item
+        #print 'av' + item[1],title_items[0],'分类',title_items[2],title_items[1]
+        #print '投稿时间',time_item,'up主',usname_item
+        #print '视频说明'
+        #print intro_item
 
         dataUrl = 'https://interface.bilibili.com/player?id=cid:' + str(item[0]) + '&aid=' + str(item[1])
         dataRequest = urllib2.Request(dataUrl)
@@ -84,7 +84,7 @@ class Bilibili(object):
         coins_pattern = re.compile('<coins>(.*?)</coins>',re.S)
         coins_item = re.findall(coins_pattern, dataContent)[0]
 
-        print '播放量',click_item,'收藏量',fa_item,'硬币数',coins_item
+        #print '播放量',click_item,'收藏量',fa_item,'硬币数',coins_item
 
         pageDatas.append(['av' + item[1],title_items[0],title_items[2],title_items[1],time_item,usname_item,intro_item,click_item,fa_item,coins_item])
 
@@ -101,7 +101,7 @@ class Bilibili(object):
             if input == 'Q':
                 self.enable = False
                 return
-            print u"视频号:%s\t视频名称:%s\t分类:%s>%s\t投稿时间:%s\tup主:%s\n视频说明:%s\n播放量:%s\t收藏量:%s\t硬币数:%s" %(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9])
+            print "视频号:%s\t视频名称:%s\t分类:%s>%s\t投稿时间:%s\tup主:%s\n视频说明:%s\n播放量:%s\t收藏量:%s\t硬币数:%s" %(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9])
 
     def start(self):
         self.enable = True
