@@ -88,12 +88,13 @@ def loop():
 	global i, items, content
 	while 1:
 	    print 'thread %s is running...' % threading.current_thread().name
-	    items,content = url_data(i)
 	    lock.acquire()
 	    try:
+	    	items,content = url_data(i)
 	        i+=1
 	    finally:
 	    	lock.release()
+	    print i
 	    if len(items):
 	    	print_data()
 	    else:

@@ -78,7 +78,7 @@ def print_data():
     pageDatas.append(['av' + item[1],title_items[0],title_items[2],title_items[1],time_item,usname_item,intro_item,click_item,fa_item,coins_item])
 
     for data in pageDatas:
-        targetData = "\n视频号:%s\t视频名称:%s\t分类:%s>%s\t投稿时间:%s\tup主:%s\n视频说明:%s\n播放量:%s\t收藏量:%s\t硬币数:%s\n" %(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9])
+        targetData = "\n视频号:%s\t视频名称:%s\t分类:%s>%s\t投稿时间:%s\tup主:%s\n视频说明:%s\n播放量:%s\t收藏量:%s\t硬币数:%s\n" %(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9]) + i
         f = open('bilibili.html', 'a')
         f.write(targetData)
         f.close()
