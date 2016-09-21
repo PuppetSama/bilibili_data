@@ -5,7 +5,7 @@ import gzip
 import re
 import StringIO
 
-i = 990
+i = 9
 k = 0
 def url_data(page):
     url = 'https://www.bilibili.com/video/av' + str(page)

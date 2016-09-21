@@ -4,44 +4,36 @@ import urllib2
 import gzip
 import re
 import StringIO
+import time, threading
 
-page = 132
-url = 'https://www.bilibili.com/video/av' + str(page)
-try:
-    request = urllib2.Request(url)
-    response = urllib2.urlopen(request)
-    if response.info().get('Content-Encoding') == 'gzip':
-        # request.add_header('Accept-encoding', 'gzip')
-        # opener = urllib2.build_opener()
-        # f = opener.open(request)
-        # compresseddata = f.read()
-        # compressedstream = StringIO.StringIO(compresseddata)
-        # gzipper = gzip.GzipFile(fileobj=compressedstream)
-        # print gzipper.read()
-        buf = StringIO.StringIO( response.read())
-        gzip_f = gzip.GzipFile(fileobj=buf)
-        content = gzip_f.read()
-    else:
-        content = response.read().decode('utf-8')
-except urllib2.URLError, e:
-	if hasattr(e, "code"):
-		print e.code
-	if hasattr(e, "reason"):
-		print e.reason
+i = 9
+lock = threading.Lock()
+def url_data(page):
+    url = 'https://www.bilibili.com/video/av' + str(page)
+    try:
+        request = urllib2.Request(url)
+        response = urllib2.urlopen(request)
+        if response.info().get('Content-Encoding') == 'gzip':
+            buf = StringIO.StringIO( response.read())
+            gzip_f = gzip.GzipFile(fileobj=buf)
+            content = gzip_f.read()
+        else:
+            content = response.read().decode('utf-8')
+    except urllib2.URLError, e:
+        if hasattr(e, "code"):
+            print e.code
+        if hasattr(e, "reason"):
+            print e.reason
 
-# 拉出来看看是否有需要的信息
-#f = open('bilibili.html', 'w')
-#f.write(content)
-#f.close()
+    pattern = re.compile('<script type=\'text/javascript\'>.*?cid=(.*?)&aid=(.*?)&.*?</script>', re.S)
+    items = re.findall(pattern, content)
 
-#pattern = re.compile('<script type=\'text/javascript\'>EmbedPlayer(\'player\', \"http://static.hdslb.com/play.swf\", \"cid=(.*?)&aid=(.*?)&pre_ad=0\");</script>', re.S)
-pattern = re.compile('<script type=\'text/javascript\'>.*?cid=(.*?)&aid=(.*?)&.*?</script>', re.S)
-items = re.findall(pattern, content)
-#print items
+    return items,content
 
 
 
 def print_data():
+    pageDatas = []
     for item in items:
         print item[0],item[1]
     title_pattern = re.compile('<title>(.*?)</title>', re.S)
@@ -51,12 +43,14 @@ def print_data():
     time_item = re.findall(time_pattern, content)[0]
     intro_pattern = re.compile('<div id="v_desc">(.*?)</div>', re.S)
     if re.findall(intro_pattern, content):
-    	intro_item = re.findall(intro_pattern, content)[0]
+        intro_item = re.findall(intro_pattern, content)[0]
     else:
-    	intro_item = None
-
+        intro_item = None
     usname_pattern = re.compile('class="name".*?title="(.*?)"', re.S)
-    usname_item = re.findall(usname_pattern, content)[0]
+    if re.findall(usname_pattern, content):
+        usname_item = re.findall(usname_pattern, content)[0]
+    else:
+        usname_item = None
     print 'av' + item[1],title_items[0],'分类',title_items[2],title_items[1]
     print '投稿时间',time_item,'up主',usname_item
     print '视频说明'
@@ -82,12 +76,48 @@ def print_data():
 
     print '播放量',click_item,'收藏量',fa_item,'硬币数',coins_item
 
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
-if len(items):
-	print_data()
-else:
-	print '未能找到有效信息'
+    pageDatas.append(['av' + item[1],title_items[0],title_items[2],title_items[1],time_item,usname_item,intro_item,click_item,fa_item,coins_item])
 
+    for data in pageDatas:
+        targetData = "\n视频号:%s\t视频名称:%s\t分类:%s>%s\t投稿时间:%s\tup主:%s\n视频说明:%s\n播放量:%s\t收藏量:%s\t硬币数:%s\n" %(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9])
+        f = open('bilibili.html', 'a')
+        f.write(targetData)
+        f.close()
+
+def loop():
+	global i, items, content
+	while 1:
+	    print 'thread %s is running...' % threading.current_thread().name
+	    items,content = url_data(i)
+	    lock.acquire()
+	    try:
+	        i+=1
+	    finally:
+	    	lock.release()
+	    if len(items):
+	    	print_data()
+	    else:
+	    	print '未能找到有效信息'
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+# while 1:
+#     items,content = url_data(i)
+#     i+=1
+#     if len(items):
+#         print_data()
+#     else:
+#         print '未能找到有效信息'
+
+t1 = threading.Thread(target=loop, name='Loop1')
+t2 = threading.Thread(target=loop, name='Loop2')
+t3 = threading.Thread(target=loop, name='Loop3')
+t1.start()
+t2.start()
+t3.start()
+t1.join()
+t2.join()
+t3.join()
+
+print 'all'
 
 
 
