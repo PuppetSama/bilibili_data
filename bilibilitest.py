@@ -5,9 +5,16 @@ import gzip
 import re
 import StringIO
 import time, threading
+import mysql.connector
 
 i = 9
 lock = threading.Lock()
+conn = mysql.connector.connect(
+	user='root',
+	password='Kang',
+	database='bilibili')
+cur = conn.cursor()
+
 def url_data(page):
     url = 'https://www.bilibili.com/video/av' + str(page)
     try:
@@ -19,7 +26,7 @@ def url_data(page):
             content = gzip_f.read()
         else:
             content = response.read().decode('utf-8')
-    except urllib2.URLError, e:
+    except urllib2.URLError, e:	
         if hasattr(e, "code"):
             print e.code
         if hasattr(e, "reason"):
@@ -27,7 +34,10 @@ def url_data(page):
 
     pattern = re.compile('<script type=\'text/javascript\'>.*?cid=(.*?)&aid=(.*?)&.*?</script>', re.S)
     items = re.findall(pattern, content)
-
+    if items == []:
+    	pattern = re.compile('<iframe.*?class=\"player\".*?cid=(.*?)&aid=(.*?)\"', re.S)
+    	items = re.findall(pattern, content)
+    print items
     return items,content
 
 
@@ -83,6 +93,10 @@ def print_data():
         f = open('bilibili.html', 'a')
         f.write(targetData)
         f.close()
+        
+
+        query = ("insert into av_data(av_id, av_name, av_sort, av_time, av_user, av_description, av_click, av_favorite, av_coins) values(%s,%s,%s>%s,%s,%s,%s,%s,%s,%s) " %(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9]))
+        cur.exexute(query) 
 
 def loop():
 	global i, items, content
@@ -111,13 +125,32 @@ def loop():
 t1 = threading.Thread(target=loop, name='Loop1')
 t2 = threading.Thread(target=loop, name='Loop2')
 t3 = threading.Thread(target=loop, name='Loop3')
+t4 = threading.Thread(target=loop, name='Loop4')
+t5 = threading.Thread(target=loop, name='Loop5')
+t6 = threading.Thread(target=loop, name='Loop6')
+t7 = threading.Thread(target=loop, name='Loop7')
+t8 = threading.Thread(target=loop, name='Loop8')
+t9 = threading.Thread(target=loop, name='Loop9')
 t1.start()
 t2.start()
 t3.start()
+t4.start()
+t5.start()
+t6.start()
+t7.start()
+t8.start()
+t9.start()
 t1.join()
 t2.join()
 t3.join()
-
+t4.join()
+t5.join()
+t6.join()
+t7.join()
+t8.join()
+t9.join()
+cur.close()   
+conn.close()
 print 'all'
 
 
