@@ -54,6 +54,9 @@ def print_data():
     intro_pattern = re.compile('<div id="v_desc">(.*?)</div>', re.S)
     if re.findall(intro_pattern, content):
         intro_item = re.findall(intro_pattern, content)[0]
+        if "<a" in intro_item:
+            removeAddr = re.compile('<a.*?>|</a>')
+            intro_item = re.sub(removeAddr,"",intro_item).strip()
     else:
         intro_item = None
     usname_pattern = re.compile('class="name".*?title="(.*?)"', re.S)
