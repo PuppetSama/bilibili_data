@@ -7,7 +7,7 @@ import StringIO
 import time, threading
 import mysql.connector
 
-i = 9
+i = 6599584
 lock = threading.Lock()
 conn = mysql.connector.connect(
 	user='root',
@@ -96,7 +96,7 @@ def print_data():
         
 
         query = ("insert into av_data(av_id, av_name, av_sort, av_time, av_user, av_description, av_click, av_favorite, av_coins) values(%s,%s,%s>%s,%s,%s,%s,%s,%s,%s) " %(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9]))
-        cur.exexute(query) 
+        cur.execute(query) 
 
 def loop():
 	global i, items, content
