@@ -15,8 +15,6 @@ headers = {'User-Agent':"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (
 def url_data(aid):
     all_url = 'https://www.bilibili.com/video/av' + str(aid)  ##开始的URL地址
     start_html = requests.get(all_url,  headers=headers)  ##使用requests中的get方法来获取all_url的内容 headers为上面设置的请求头、请务必参考requests官方文档解释
-    #print(start_html.text) ##打印出start_html (请注意，concent是二进制的数据，一般用于下载图片、视频、音频、等多媒体内容是才使用concent, 对于打印网页内容请使用text)
-
     pattern = re.compile('<script type=\'text/javascript\'>.*?cid=(.*?)&aid=.*?&.*?</script>', re.S)
     items = re.findall(pattern, start_html.text)
     if items == []:
