@@ -17,7 +17,7 @@ def url_data(aid):
     start_html = requests.get(all_url,  headers=headers)  ##使用requests中的get方法来获取all_url的内容 headers为上面设置的请求头、请务必参考requests官方文档解释
     pattern = re.compile('<script type=\'text/javascript\'>.*?cid=(.*?)&aid=.*?&.*?</script>', re.S)
     items = re.findall(pattern, start_html.text)
-    if items == []:
+    if items is None:
             pattern = re.compile('<iframe.*?class=\"player\".*?cid=(.*?)&aid=.*?\"', re.S)
             items = re.findall(pattern, start_html.text)
     for item in items:
