@@ -1,20 +1,16 @@
 # -*- coding:utf-8 -*-
 from bs4 import BeautifulSoup
 import requests
+import time
 import re
 import mysql.connector
 
-aid = 9
-conn = mysql.connector.connect(
-    user='root',
-    password='Kang',
-    database='bilibili')
-cur = conn.cursor()
-headers = {'User-Agent':"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1"}##浏览器请求头（大部分网站没有这个请求头会报错、请务必加上哦）
+aid = 3666
 
 def url_data(aid):
-    all_url = 'https://www.bilibili.com/video/av' + str(aid)  ##开始的URL地址
-    start_html = requests.get(all_url,  headers=headers)  ##使用requests中的get方法来获取all_url的内容 headers为上面设置的请求头、请务必参考requests官方文档解释
+    headers = {'User-Agent':"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1"}
+    all_url = 'https://www.bilibili.com/video/av' + str(aid)
+    start_html = requests.get(all_url,  headers=headers)
     pattern = re.compile('<script type=\'text/javascript\'>.*?cid=(.*?)&aid=.*?&.*?</script>', re.S)
     items = re.findall(pattern, start_html.text)
     if items is None:
@@ -24,6 +20,13 @@ def url_data(aid):
         return item
 
 def print_data(item):
+
+    conn = mysql.connector.connect(
+    user='root',
+    password='Kang',
+    database='bilibili')
+    cur = conn.cursor()
+
     data_url =  'https://interface.bilibili.com/player?id=cid:' + str(item) + '&aid=' + str(aid)
     data_html = requests.get(data_url,  headers=headers) 
     Soup = BeautifulSoup(data_html.text, 'lxml')
@@ -43,6 +46,7 @@ def print_data(item):
 
 while 1:
     item = url_data(aid)
+    time.sleep(0.5)
     if item:
         print_data(item)
     else:
