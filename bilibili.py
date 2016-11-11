@@ -28,7 +28,7 @@ def print_data(item):
     cur = conn.cursor()
 
     data_url =  'https://interface.bilibili.com/player?id=cid:' + str(item) + '&aid=' + str(aid)
-    data_html = requests.get(data_url,  headers=headers) 
+    data_html = requests.get(data_url, headers=headers, timeout = 10) 
     Soup = BeautifulSoup(data_html.text, 'lxml')
     print aid
     data_typeid = Soup.find('typeid')
