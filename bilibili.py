@@ -43,6 +43,7 @@ def print_data(item):
     query = ("insert into bili_data(aid, typeid, click, favourites, coins) values('%s','%s','%s','%s','%s') " %(aid, typeid, click, favourites, coins))
     cur.execute(query) 
     conn.commit()
+    conn.close()
 
 while 1:
     item = url_data(aid)
