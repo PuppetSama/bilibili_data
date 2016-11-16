@@ -14,10 +14,12 @@ def url_data(aid):
     pattern = re.compile('<script type=\'text/javascript\'>.*?cid=(.*?)&aid=.*?&.*?</script>', re.S)
     items = re.findall(pattern, start_html.text)
     if items is None:
-            pattern = re.compile('<iframe.*?class=\"player\".*?cid=(.*?)&aid=.*?\"', re.S)
-            items = re.findall(pattern, start_html.text)
+        pattern = re.compile('<iframe.*?class=\"player\".*?cid=(.*?)&aid=.*?\"', re.S)
+        items = re.findall(pattern, start_html.text)
     for item in items:
         return item
+    s = requests.session()
+    s.keep_alive = False
 
 def print_data(item):
 
