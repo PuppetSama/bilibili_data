@@ -6,14 +6,14 @@ import re
 import mysql.connector
 
 aid = 3666
+headers = {'User-Agent':"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1"}
 
-def url_data(aid):
-    headers = {'User-Agent':"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1"}
+def url_data(aid):    
     all_url = 'https://www.bilibili.com/video/av' + str(aid)
     start_html = requests.get(all_url,  headers=headers)
     pattern = re.compile('<script type=\'text/javascript\'>.*?cid=(.*?)&aid=.*?&.*?</script>', re.S)
     items = re.findall(pattern, start_html.text)
-    if items is None:
+    if not bool(items):
         pattern = re.compile('<iframe.*?class=\"player\".*?cid=(.*?)&aid=.*?\"', re.S)
         items = re.findall(pattern, start_html.text)
     for item in items:
