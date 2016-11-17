@@ -5,7 +5,7 @@ import time
 import re
 import mysql.connector
 
-aid = 3666
+aid = 1
 headers = {'User-Agent':"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1"}
 
 def url_data(aid):    
@@ -28,19 +28,14 @@ def print_data(item):
     password='Kang',
     database='bilibili')
     cur = conn.cursor()
-
+    print aid
     data_url =  'https://interface.bilibili.com/player?id=cid:' + str(item) + '&aid=' + str(aid)
     data_html = requests.get(data_url, headers=headers, timeout = 10) 
     Soup = BeautifulSoup(data_html.text, 'lxml')
-    print aid
-    data_typeid = Soup.find('typeid')
-    for typeid in data_typeid: print typeid
-    data_click = Soup.find('click')
-    for click in data_click: print click
-    data_fa = Soup.find('favourites')
-    for favourites in data_fa: print favourites
-    data_coins = Soup.find('coins')
-    for coins in data_coins: print coins
+    typeid = Soup.typeid.get_text()
+    click = Soup.click.get_text()
+    favourites = Soup.favourites.get_text()
+    coins = Soup.coins.get_text()
 
     query = ("insert into bili_data(aid, typeid, click, favourites, coins) values('%s','%s','%s','%s','%s') " %(aid, typeid, click, favourites, coins))
     cur.execute(query) 
@@ -53,5 +48,5 @@ while 1:
     if item:
         print_data(item)
     else:
-        print '未能找到有效信息'
+        print 'None'
     aid+=1
